@@ -168,32 +168,34 @@ export default function NewApplication() {
             </Button>
           </div>
 
-          <div>
-            <Label htmlFor="water-rate" className="text-sm font-medium">
-              Water Rate (L/ha)
-            </Label>
-            <Input
-              id="water-rate"
-              type="number"
-              step="10"
-              value={tankMix.waterRate}
-              onChange={(e) =>
-                setTankMix({ ...tankMix, waterRate: parseFloat(e.target.value) || 0 })
-              }
-              className="mt-1.5 text-right"
-              data-testid="input-water-rate"
-            />
-          </div>
-
-          <div className="space-y-3">
-            {tankMix.items.map((item) => (
-              <TankMixItem
-                key={item.id}
-                {...item}
-                onRemove={removeChemical}
-                onUpdate={updateChemical}
+          <div className="flex gap-4">
+            <div className="w-1/4">
+              <Label htmlFor="water-rate" className="text-sm font-medium">
+                Water Rate (L/ha)
+              </Label>
+              <Input
+                id="water-rate"
+                type="number"
+                step="10"
+                value={tankMix.waterRate}
+                onChange={(e) =>
+                  setTankMix({ ...tankMix, waterRate: parseFloat(e.target.value) || 0 })
+                }
+                className="mt-1.5 text-right"
+                data-testid="input-water-rate"
               />
-            ))}
+            </div>
+
+            <div className="w-3/4 space-y-3">
+              {tankMix.items.map((item) => (
+                <TankMixItem
+                  key={item.id}
+                  {...item}
+                  onRemove={removeChemical}
+                  onUpdate={updateChemical}
+                />
+              ))}
+            </div>
           </div>
 
           {selectedPaddocks.length > 0 && (
