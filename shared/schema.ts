@@ -1,5 +1,5 @@
 import { sql } from "drizzle-orm";
-import { pgTable, text, varchar } from "drizzle-orm/pg-core";
+import { pgTable, text, varchar, real, jsonb, timestamp } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 
@@ -16,3 +16,22 @@ export const insertUserSchema = createInsertSchema(users).pick({
 
 export type InsertUser = z.infer<typeof insertUserSchema>;
 export type User = typeof users.$inferSelect;
+
+export const paddocks = pgTable("paddocks", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  name: text("name").notNull(),
+  farm: text("farm").notNull(),
+  area: real("area").notNull(),
+  boundaryCoordinates: jsonb("boundary_coordinates").notNull().$type<Array<{ latitude: number; longitude: number }>>(),
+  centerLatitude: real("center_latitude").notNull(),
+  centerLongitude: real("center_longitude").notNull(),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+});
+
+export const insertPaddockSchema = createInsertSchema(paddocks).omit({
+  id: true,
+  createdAt: true,
+});
+
+export type InsertPaddock = z.infer<typeof insertPaddockSchema>;
+export type Paddock = typeof paddocks.$inferSelect;
