@@ -1,0 +1,51 @@
+import { Home, FileText, Plus, Settings } from "lucide-react";
+import { useLocation, Link } from "wouter";
+import { cn } from "@/lib/utils";
+
+export function MobileNav() {
+  const [location] = useLocation();
+
+  const navItems = [
+    { path: "/", icon: Home, label: "Dashboard" },
+    { path: "/records", icon: FileText, label: "Records" },
+    { path: "/new", icon: Plus, label: "New" },
+    { path: "/settings", icon: Settings, label: "Settings" },
+  ];
+
+  return (
+    <nav className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-card border-t border-card-border">
+      <div className="h-16 flex items-center justify-around px-2">
+        {navItems.map((item) => {
+          const Icon = item.icon;
+          const isActive = location === item.path;
+          return (
+            <Link key={item.path} href={item.path}>
+              <a
+                data-testid={`nav-${item.label.toLowerCase()}`}
+                className={cn(
+                  "flex flex-col items-center justify-center min-w-[64px] h-12 rounded-lg transition-colors hover-elevate active-elevate-2",
+                  isActive && "bg-primary/10"
+                )}
+              >
+                <Icon
+                  className={cn(
+                    "w-6 h-6 mb-1",
+                    isActive ? "text-primary" : "text-muted-foreground"
+                  )}
+                />
+                <span
+                  className={cn(
+                    "text-xs font-medium",
+                    isActive ? "text-primary" : "text-muted-foreground"
+                  )}
+                >
+                  {item.label}
+                </span>
+              </a>
+            </Link>
+          );
+        })}
+      </div>
+    </nav>
+  );
+}
