@@ -15,14 +15,32 @@ export function GPSLocation({ latitude, longitude, accuracy, onCapture }: GPSLoc
   const [isCapturing, setIsCapturing] = useState(false);
 
   const handleCapture = () => {
-    setIsCapturing(true);
-    // Simulate GPS capture
-    setTimeout(() => {
-      if (onCapture) {
-        onCapture(-27.4698, 153.0251, 12); // todo: remove mock functionality
-      }
+    if (!navigator.geolocation) {
+      console.error("Geolocation is not supported by this browser.");
       setIsCapturing(false);
-    }, 1500);
+      return;
+    }
+
+    setIsCapturing(true);
+    
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const { latitude, longitude, accuracy } = position.coords;
+        if (onCapture) {
+          onCapture(latitude, longitude, accuracy);
+        }
+        setIsCapturing(false);
+      },
+      (error) => {
+        console.error("Error getting location:", error.message);
+        setIsCapturing(false);
+      },
+      {
+        enableHighAccuracy: true,
+        timeout: 10000,
+        maximumAge: 0,
+      }
+    );
   };
 
   return (

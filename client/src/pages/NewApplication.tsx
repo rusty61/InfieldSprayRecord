@@ -24,11 +24,11 @@ export default function NewApplication() {
     timestamp: new Date(),
   });
 
-  const [gpsData, setGpsData] = useState({
-    latitude: -27.4698,
-    longitude: 153.0251,
-    accuracy: 12,
-  });
+  const [gpsData, setGpsData] = useState<{
+    latitude?: number;
+    longitude?: number;
+    accuracy?: number;
+  }>({});
 
   const [tankMix, setTankMix] = useState({
     name: "",
