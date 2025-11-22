@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { AppHeader } from "@/components/AppHeader";
 import { WeatherCard } from "@/components/WeatherCard";
 import { GPSLocation } from "@/components/GPSLocation";
@@ -11,6 +12,7 @@ import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { Plus, Save } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import type { Paddock } from "@shared/schema";
 
 export default function NewApplication() {
   const { toast } = useToast();
@@ -40,12 +42,9 @@ export default function NewApplication() {
 
   const [selectedPaddocks, setSelectedPaddocks] = useState<string[]>([]);
 
-  const paddocks = [
-    { id: "1", name: "North Field 5", area: 12.5, farm: "Riverside Farm" },
-    { id: "2", name: "South Block A", area: 8.3, farm: "Riverside Farm" },
-    { id: "3", name: "East Paddock 12", area: 15.2, farm: "Hillside Farm" },
-    { id: "4", name: "West Section 3", area: 6.8, farm: "Hillside Farm" },
-  ];
+  const { data: paddocks = [] } = useQuery<Paddock[]>({
+    queryKey: ["/api/paddocks"],
+  });
 
   const selectedPaddocksList = paddocks.filter((p) =>
     selectedPaddocks.includes(p.id)
@@ -146,7 +145,6 @@ export default function NewApplication() {
         <div>
           <Label className="text-sm font-medium mb-3 block">Select Paddocks</Label>
           <PaddockSelector
-            paddocks={paddocks}
             selectedIds={selectedPaddocks}
             onSelectionChange={setSelectedPaddocks}
           />

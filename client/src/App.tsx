@@ -8,6 +8,7 @@ import { MobileNav } from "@/components/MobileNav";
 import Dashboard from "@/pages/Dashboard";
 import NewApplication from "@/pages/NewApplication";
 import Records from "@/pages/Records";
+import Paddocks from "@/pages/Paddocks";
 import Settings from "@/pages/Settings";
 import NotFound from "@/pages/not-found";
 
@@ -17,6 +18,7 @@ function Router() {
       <Route path="/" component={Dashboard} />
       <Route path="/new" component={NewApplication} />
       <Route path="/records" component={Records} />
+      <Route path="/paddocks" component={Paddocks} />
       <Route path="/settings" component={Settings} />
       <Route component={NotFound} />
     </Switch>

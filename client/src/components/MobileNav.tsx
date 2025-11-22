@@ -1,4 +1,4 @@
-import { Home, FileText, Plus, Settings } from "lucide-react";
+import { Home, FileText, Plus, MapPin, Settings } from "lucide-react";
 import { useLocation, Link } from "wouter";
 import { cn } from "@/lib/utils";
 
@@ -9,6 +9,7 @@ export function MobileNav() {
     { path: "/", icon: Home, label: "Dashboard" },
     { path: "/records", icon: FileText, label: "Records" },
     { path: "/new", icon: Plus, label: "New" },
+    { path: "/paddocks", icon: MapPin, label: "Paddocks" },
     { path: "/settings", icon: Settings, label: "Settings" },
   ];
 
@@ -20,10 +21,10 @@ export function MobileNav() {
           const isActive = location === item.path;
           return (
             <Link key={item.path} href={item.path}>
-              <a
+              <div
                 data-testid={`nav-${item.label.toLowerCase()}`}
                 className={cn(
-                  "flex flex-col items-center justify-center min-w-[64px] h-12 rounded-lg transition-colors hover-elevate active-elevate-2",
+                  "flex flex-col items-center justify-center min-w-[64px] h-12 rounded-lg transition-colors hover-elevate active-elevate-2 cursor-pointer",
                   isActive && "bg-primary/10"
                 )}
               >
@@ -41,7 +42,7 @@ export function MobileNav() {
                 >
                   {item.label}
                 </span>
-              </a>
+              </div>
             </Link>
           );
         })}

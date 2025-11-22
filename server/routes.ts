@@ -47,13 +47,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.patch("/api/paddocks/:id", async (req, res) => {
     try {
-      const paddock = await storage.updatePaddock(req.params.id, req.body);
+      // Reject empty payloads
+      if (!req.body || Object.keys(req.body).length === 0) {
+        return res.status(400).json({ error: "Update data cannot be empty" });
+      }
+      
+      // Validate partial update data
+      const validatedData = insertPaddockSchema.partial().parse(req.body);
+      const paddock = await storage.updatePaddock(req.params.id, validatedData);
       if (!paddock) {
-        return res.status(404).json({ error: "Paddock not found" });
+        return res.status(404).json({ error: "Paddock not found or update failed" });
       }
       res.json(paddock);
     } catch (error) {
-      res.status(400).json({ error: "Failed to update paddock" });
+      res.status(400).json({ error: "Invalid update data" });
     }
   });
 
