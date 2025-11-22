@@ -1,0 +1,183 @@
+Product brief — Infield Spray Record (Web App)
+
+Goals & users
+Goal: Capture compliant spray‑mix and application records in the field, fast, with accurate weather + GPS + audit trail.
+
+Primary users: Farm owner/manager, operators/contractors, auditors.
+
+Outcomes:
+
+Valid records for QA audits (date/time, operator, mix, paddocks, weather, location, rates, totals).
+
+Reusable paddocks/farms/tank‑mix templates.
+
+Mobile‑friendly UI that works offline and syncs later.
+
+Core features (MVP)
+Tank mix builder
+
+Multiple chemicals per mix: name, rate per ha (or per 100 L), product formulation, withholding period notes.
+
+Water rate (L/ha).
+
+Real‑time totals: for a selected paddock set (can add multiple paddocks to the same tank mix).
+
+Unit handling (L/ha, mL/ha, g/ha; per‑100 L option).
+
+Field & paddock selection
+
+Add/select Farm and Paddock (name/number).
+
+Paddock area (ha) saved for reuse; optional boundary GeoJSON for accurate area.
+
+Weather & GPS
+
+GPS: grab current phone location (HTML5 geolocation).
+
+Weather: call your Blynk weather station webhook to fetch wind speed, direction, temp, humidity; snapshot stored with record.
+
+Stamping & audit
+
+Date scroller with Now shortcut (defaults to device time in Australia/Sydney).
+
+Operator name, Owner name, Farm name.
+
+Immutable audit log (who, when, what changed), versioned records.
+
+Records & export
+
+View past jobs, filter by farm/paddock/date.
+
+One‑click PDF/CSV export matching QA audit formats.
+
+Offline‑first
+
+PWA installable on phone; local cache and queued submissions.
+
+Architecture overview Front end
+Framework: Next.js (React) or Vite + React.
+
+UI: Tailwind CSS + shadcn/ui; mobile‑first; form autosave.
+
+PWA: manifest.json, service worker (Workbox), offline cache, install prompt.
+
+Maps (optional but nice): Leaflet/MapLibre for paddock boundaries; turf.js for area checks.
+
+Validation: Zod (schema validation) + react‑hook‑form.
+
+Backend
+
+API: FastAPI (Python) on Render.
+
+Auth: Supabase Auth (email magic link / OAuth) or passwordless link; role‑based (owner, operator, auditor‑read).
+
+Webhook: FastAPI endpoint to pull Blynk station data server‑side; FE can call your BE (not Blynk directly) to avoid exposing secrets.
+
+Time zone: store timestamps in UTC, display in Australia/Sydney.
+
+Storage
+
+DB: Supabase Postgres (+ PostGIS if you store paddock boundaries).
+
+Storage bucket: Supabase for attachments/exports.
+
+Row Level Security (RLS): enable per‑org/owner scoping.
+
+Audit: append‑only audit_logs table + Postgres triggers for versions.
+
+DevOps
+
+Repos: GitHub mono‑repo (apps/frontend, apps/backend).
+
+CI/CD: GitHub Actions → Render (BE), Vercel/Netlify (FE).
+
+Env: .env for FE (public keys only) and BE secrets (Render env vars).
+
+Monitoring: Render logs + Supabase logs; optional Sentry.
+
+Data model (Supabase/Postgres)
+Entities (tables)
+
+profiles (user_id PK, name, role)
+
+owners (owner_id PK, owner_name)
+
+farms (farm_id PK, owner_id FK, farm_name)
+
+paddocks (paddock_id PK, farm_id FK, paddock_name, area_ha numeric, boundary_geojson jsonb NULL)
+
+chemicals (chemical_id PK, name, formulation, notes)
+
+tank_mixes (mix_id PK, owner_id FK, mix_name, water_rate_lph)
+
+tank_mix_items (mix_item_id PK, mix_id FK, chemical_id FK, rate_value numeric, rate_unit text)
+
+applications (application_id PK, mix_id FK, operator_user_id FK, started_at timestamptz, finished_at timestamptz NULL, gps_point geography(Point,4326), wind_speed_ms numeric, wind_direction_deg int, temp_c numeric, humidity_pct numeric, weather_source text, notes text)
+
+application_paddocks (id PK, application_id FK, paddock_id FK)
+
+blynk_stations (station_id PK, name, webhook_url, api_key, owner_id FK)
+
+weather_snapshots (id PK, application_id FK, payload jsonb, captured_at timestamptz)
+
+audit_logs (id PK, entity_type text, entity_id uuid/int, action text, actor_user_id FK, at timestamptz, diff jsonb, ip text)
+
+Indexes & constraints
+
+RLS on all owner‑scoped tables.
+
+Partial unique: (owner_id, farm_name), (farm_id, paddock_name) to prevent dupes.
+
+GIST index for gps_point if querying by location.
+
+Foreign keys cascade on delete where appropriate (never for audit).
+
+Calculations (in UI & API)
+Given:
+
+Water rate WR (L/ha)
+
+Chemical rate CR (various units)
+
+Area A (ha) of selected paddocks (sum if multiple)
+
+Totals
+
+Total water (L) = WR × A
+
+For each chemical item:
+
+If per‑ha: Volume = CR × A (e.g., 1.2 L/ha × 34 ha = 40.8 L)
+
+If per‑100 L: Volume = (CR × Total water) / 100
+
+Round using sensible precision (e.g., water to 1 L, liquid chemicals to 0.1 L, concentrates mL).
+
+QA checks
+
+Wind speed within allowed range (e.g., 3–15 km/h configurable).
+
+Wind direction not toward sensitive zones (optional if you store paddock buffers).
+
+Temperature/humidity within label conditions (optional rule set per chemical).
+
+API design (FastAPI) Auth
+Supabase JWT verification middleware (or issue your own).
+
+Roles: owner, operator, auditor_read.
+
+REST endpoints (examples)
+
+POST /api/owners/{owner_id}/farms → create farm
+
+POST /api/farms/{farm_id}/paddocks → create paddock
+
+POST /api/tank-mixes → create/update mix (+ items)
+
+GET /api/tank-mixes?owner_id= → list
+
+POST /api/applications → start application (captures GPS & weather snapshot)
+
+POST /api/applications/{id}/finalize → finish time + freeze record
+
+GET /api/applications?filters… → search/export
