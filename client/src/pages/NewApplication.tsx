@@ -204,7 +204,7 @@ export default function NewApplication() {
         </Card>
 
         <div>
-          <Label className="text-sm font-medium mb-3 block">Select Paddocks</Label>
+          <Label className="text-sm font-medium mb-3 block text-[#fcb32c]">Select Paddocks</Label>
           <PaddockSelector
             selectedIds={selectedPaddocks}
             onSelectionChange={setSelectedPaddocks}
