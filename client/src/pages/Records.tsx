@@ -97,7 +97,7 @@ export default function Records() {
                 placeholder="Search by paddock or operator..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-9"
+                className="pl-9 bg-[#093d2bb3]"
                 data-testid="input-search"
               />
             </div>
