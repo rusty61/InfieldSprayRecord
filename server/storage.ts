@@ -188,6 +188,20 @@ export class MemStorage implements IStorage {
     // Sort by distance (nearest first)
     return paddocksWithDistance.sort((a, b) => a.distance - b.distance);
   }
+
+  async getAllApplications(): Promise<Application[]> {
+    return await db.select().from(applications);
+  }
+
+  async getApplication(id: string): Promise<Application | undefined> {
+    const result = await db.select().from(applications).where(eq(applications.id, id));
+    return result[0];
+  }
+
+  async createApplication(insertApplication: InsertApplication): Promise<Application> {
+    const result = await db.insert(applications).values(insertApplication).returning();
+    return result[0];
+  }
 }
 
 export const storage = new MemStorage();
