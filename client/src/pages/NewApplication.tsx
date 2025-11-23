@@ -299,7 +299,7 @@ export default function NewApplication() {
         <div className="flex gap-3">
           <Button
             onClick={handleSubmit}
-            className="flex-1"
+            className="flex-1 bg-[#093d2b] text-[#fcb32c]"
             data-testid="button-save-application"
             disabled={createApplicationMutation.isPending}
           >
