@@ -25,7 +25,7 @@ export default function Settings() {
       <main className="p-4 md:p-6 space-y-6 max-w-4xl mx-auto">
         <div>
           <h2 className="text-2xl font-semibold mb-2 text-[#fcb32c]">Settings</h2>
-          <p className="text-sm text-muted-foreground">
+          <p className="text-sm text-[#fcb32c]">
             Manage your account and application preferences
           </p>
         </div>
