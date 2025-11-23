@@ -73,7 +73,6 @@ export default function Records() {
   return (
     <div className="min-h-screen bg-background pb-20 md:pb-6">
       <AppHeader title="Records" />
-
       <main className="p-4 md:p-6 space-y-6 max-w-6xl mx-auto">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
@@ -126,7 +125,7 @@ export default function Records() {
                 <div className="flex-1 space-y-2">
                   <div className="flex items-start justify-between">
                     <div>
-                      <h3 className="font-semibold text-lg">{app.paddock}</h3>
+                      <h3 className="font-semibold text-lg text-[#fcb32c]">{app.paddock}</h3>
                       <p className="text-sm text-muted-foreground">{app.farm}</p>
                     </div>
                     <Badge variant="secondary" className="md:hidden">

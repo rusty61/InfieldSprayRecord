@@ -1,7 +1,7 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
-import { insertPaddockSchema } from "@shared/schema";
+import { insertPaddockSchema, insertApplicationSchema } from "@shared/schema";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Paddock routes
@@ -73,6 +73,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(204).send();
     } catch (error) {
       res.status(500).json({ error: "Failed to delete paddock" });
+    }
+  });
+
+  // Application routes
+  app.post("/api/applications", async (req, res) => {
+    try {
+      const validatedData = insertApplicationSchema.parse(req.body);
+      const application = await storage.createApplication(validatedData);
+      res.status(201).json(application);
+    } catch (error) {
+      res.status(400).json({ error: "Invalid application data" });
     }
   });
 

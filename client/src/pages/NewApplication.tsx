@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { AppHeader } from "@/components/AppHeader";
 import { WeatherCard } from "@/components/WeatherCard";
 import { GPSLocation } from "@/components/GPSLocation";
@@ -12,10 +12,17 @@ import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { Plus, Save } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import type { Paddock } from "@shared/schema";
+import type { Paddock, InsertApplication } from "@shared/schema";
 
 export default function NewApplication() {
   const { toast } = useToast();
+  const queryClient = useQueryClient();
+  
+  const [operator, setOperator] = useState("");
+  const [farm, setFarm] = useState("");
+  const [applicationDate, setApplicationDate] = useState(
+    new Date().toISOString().slice(0, 16)
+  );
   
   // todo: remove mock functionality
   const [weatherData, setWeatherData] = useState({
@@ -78,17 +85,67 @@ export default function NewApplication() {
     });
   };
 
+  const createApplicationMutation = useMutation({
+    mutationFn: async (data: InsertApplication) => {
+      const response = await fetch("/api/applications", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      });
+      if (!response.ok) {
+        throw new Error("Failed to create application");
+      }
+      return response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/applications"] });
+      toast({
+        title: "Application Recorded",
+        description: "Spray application has been saved successfully.",
+      });
+    },
+    onError: () => {
+      toast({
+        title: "Error",
+        description: "Failed to save application. Please try again.",
+        variant: "destructive",
+      });
+    },
+  });
+
   const handleSubmit = () => {
-    console.log("Application submitted", {
-      tankMix,
-      selectedPaddocks,
-      weatherData,
-      gpsData,
-    });
-    toast({
-      title: "Application Recorded",
-      description: "Spray application has been saved successfully.",
-    });
+    if (!operator || !farm || selectedPaddocks.length === 0) {
+      toast({
+        title: "Missing Information",
+        description: "Please fill in operator, farm, and select at least one paddock.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    const applicationData: InsertApplication = {
+      paddockId: selectedPaddocks[0], // For now, use first selected paddock
+      operator,
+      farm,
+      applicationDate: new Date(applicationDate),
+      chemicals: tankMix.items
+        .filter((item) => item.chemicalName)
+        .map((item) => ({
+          name: item.chemicalName,
+          rate: item.rate,
+          unit: item.unit,
+        })),
+      waterRate: tankMix.waterRate,
+      area: totalArea,
+      windSpeed: weatherData.windSpeed,
+      windDirection: weatherData.windDirection,
+      temperature: weatherData.temperature,
+      humidity: weatherData.humidity,
+      latitude: gpsData.latitude,
+      longitude: gpsData.longitude,
+    };
+
+    createApplicationMutation.mutate(applicationData);
   };
 
   return (
@@ -113,6 +170,8 @@ export default function NewApplication() {
               placeholder="John Davis"
               className="mt-1.5"
               data-testid="input-operator"
+              value={operator}
+              onChange={(e) => setOperator(e.target.value)}
             />
           </div>
 
@@ -125,6 +184,8 @@ export default function NewApplication() {
               placeholder="Riverside Farm"
               className="mt-1.5"
               data-testid="input-farm"
+              value={farm}
+              onChange={(e) => setFarm(e.target.value)}
             />
           </div>
 
@@ -137,7 +198,8 @@ export default function NewApplication() {
               type="datetime-local"
               className="mt-1.5"
               data-testid="input-datetime"
-              defaultValue={new Date().toISOString().slice(0, 16)}
+              value={applicationDate}
+              onChange={(e) => setApplicationDate(e.target.value)}
             />
           </div>
         </Card>
@@ -240,9 +302,10 @@ export default function NewApplication() {
             onClick={handleSubmit}
             className="flex-1"
             data-testid="button-save-application"
+            disabled={createApplicationMutation.isPending}
           >
             <Save className="w-4 h-4 mr-2" />
-            Save Application
+            {createApplicationMutation.isPending ? "Saving..." : "Save Application"}
           </Button>
         </div>
       </main>

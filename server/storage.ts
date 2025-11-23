@@ -199,7 +199,7 @@ export class MemStorage implements IStorage {
   }
 
   async createApplication(insertApplication: InsertApplication): Promise<Application> {
-    const result = await db.insert(applications).values(insertApplication).returning();
+    const result = await db.insert(applications).values([insertApplication]).returning();
     return result[0];
   }
 }
