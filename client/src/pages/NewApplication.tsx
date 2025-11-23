@@ -181,7 +181,7 @@ export default function NewApplication() {
             <Input
               id="farm"
               placeholder="Riverside Farm"
-              className="mt-1.5"
+              className="mt-1.5 bg-[#0d0d0dc4]"
               data-testid="input-farm"
               value={farm}
               onChange={(e) => setFarm(e.target.value)}
