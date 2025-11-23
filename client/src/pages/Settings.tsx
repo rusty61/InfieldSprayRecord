@@ -44,7 +44,7 @@ export default function Settings() {
               <Input
                 id="name"
                 defaultValue="John Davis"
-                className="mt-1.5"
+                className="mt-1.5 bg-[#093d2bcc]"
                 data-testid="input-name"
               />
             </div>
