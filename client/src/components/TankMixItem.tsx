@@ -68,7 +68,7 @@ export function TankMixItem({
             step="0.1"
             value={rate}
             onChange={(e) => onUpdate?.(id, "rate", parseFloat(e.target.value) || 0)}
-            className="mt-1.5 text-right bg-[#fcb32c]"
+            className="mt-1.5 text-right bg-[#000000b5]"
             data-testid={`input-rate-${id}`}
           />
         </div>
