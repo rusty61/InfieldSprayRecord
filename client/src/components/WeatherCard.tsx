@@ -22,7 +22,7 @@ export function WeatherCard({ data, onRefresh, isLoading }: WeatherCardProps) {
   const isWindCompliant = data.windSpeed >= 0.83 && data.windSpeed <= 4.17; // 3-15 km/h
 
   return (
-    <Card className="p-6" data-testid="card-weather">
+    <Card className="p-6 text-[#fcb32c]" data-testid="card-weather">
       <div className="flex items-center justify-between mb-4">
         <h3 className="text-sm font-semibold">Weather Conditions</h3>
         <Button

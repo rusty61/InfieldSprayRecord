@@ -306,7 +306,7 @@ export default function Paddocks() {
         ) : (
           <div className="grid gap-4">
             {paddocks.map((paddock) => (
-              <Card key={paddock.id} className="p-4" data-testid={`paddock-card-${paddock.id}`}>
+              <Card key={paddock.id} className="p-4 text-[#fcb32c]" data-testid={`paddock-card-${paddock.id}`}>
                 <div className="flex items-start justify-between">
                   <div className="flex-1">
                     <div className="flex items-center gap-2 mb-1">
