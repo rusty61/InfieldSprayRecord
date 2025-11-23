@@ -32,10 +32,7 @@ export function MobileNav() {
                   )}
                 />
                 <span
-                  className={cn(
-                    "text-xs font-medium",
-                    isActive ? "text-primary" : "text-muted-foreground"
-                  )}
+                  className="text-xs font-medium text-[#fcb32c]"
                 >
                   {item.label}
                 </span>
