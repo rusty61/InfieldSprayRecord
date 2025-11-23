@@ -162,7 +162,7 @@ export default function Settings() {
         </Card>
 
         <div className="flex gap-3">
-          <Button onClick={handleSave} className="flex-1" data-testid="button-save-settings">
+          <Button onClick={handleSave} className="flex-1 text-[#fcb32c] bg-[#093d2b]" data-testid="button-save-settings">
             Save Changes
           </Button>
         </div>
