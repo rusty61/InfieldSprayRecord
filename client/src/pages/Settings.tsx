@@ -57,7 +57,7 @@ export default function Settings() {
                 id="email"
                 type="email"
                 defaultValue="john.davis@example.com"
-                className="mt-1.5"
+                className="mt-1.5 bg-[#093d2bcf]"
                 data-testid="input-email"
               />
             </div>
