@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link } from "wouter";
 import { AppHeader } from "@/components/AppHeader";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -11,7 +12,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Search, Download, Eye, Calendar } from "lucide-react";
+import { Search, Download, Eye, Calendar, MapPin } from "lucide-react";
 
 export default function Records() {
   const [searchQuery, setSearchQuery] = useState("");
@@ -74,11 +75,19 @@ export default function Records() {
       <AppHeader title="Records" />
 
       <main className="p-4 md:p-6 space-y-6 max-w-6xl mx-auto">
-        <div>
-          <h2 className="text-2xl font-semibold mb-2">Application Records</h2>
-          <p className="text-sm text-muted-foreground">
-            View and export spray application history
-          </p>
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div>
+            <h2 className="text-2xl font-semibold mb-2">Application Records</h2>
+            <p className="text-sm text-muted-foreground">
+              View and export spray application history
+            </p>
+          </div>
+          <Link href="/paddocks">
+            <Button data-testid="button-new-paddock">
+              <MapPin className="w-4 h-4 mr-2" />
+              New Paddock
+            </Button>
+          </Link>
         </div>
 
         <Card className="p-4">
