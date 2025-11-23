@@ -153,7 +153,7 @@ export default function Records() {
                   </div>
                 </div>
 
-                <div className="flex gap-2">
+                <div className="flex gap-2 text-[#fcb32c]">
                   <Button
                     variant="outline"
                     size="sm"
