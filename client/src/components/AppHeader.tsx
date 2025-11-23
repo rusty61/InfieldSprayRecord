@@ -64,7 +64,7 @@ export function AppHeader({ title, onMenuClick }: AppHeaderProps) {
           </Button>
 
           <Avatar className="w-8 h-8" data-testid="avatar-user">
-            <AvatarFallback className="text-xs bg-primary text-primary-foreground">
+            <AvatarFallback className="text-xs bg-[#093d2b] text-primary-foreground">
               JD
             </AvatarFallback>
           </Avatar>
