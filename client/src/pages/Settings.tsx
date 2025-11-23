@@ -107,7 +107,7 @@ export default function Settings() {
                   Alert when weather conditions are outside safe ranges
                 </p>
               </div>
-              <Switch id="weather-alerts" defaultChecked data-testid="switch-weather-alerts" />
+              <Switch id="weather-alerts" defaultChecked data-testid="switch-weather-alerts" className="bg-[#093d2b]" />
             </div>
           </div>
         </Card>
