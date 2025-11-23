@@ -158,7 +158,7 @@ export default function Paddocks() {
   };
 
   return (
-    <div className="min-h-screen pb-20 md:pb-6 text-[#fcb32c] bg-[#464a48]">
+    <div className="min-h-screen pb-20 md:pb-6 text-[#fcb32c] bg-[#000000db]">
       <header className="p-4 md:p-6 text-[#fcb32c] bg-[#093d2b]">
         <div className="max-w-4xl mx-auto">
           <h1 className="text-2xl font-bold text-[#fcb32c]">Paddock Management</h1>
