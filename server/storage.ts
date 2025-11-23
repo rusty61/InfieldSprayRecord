@@ -199,7 +199,21 @@ export class MemStorage implements IStorage {
   }
 
   async createApplication(insertApplication: InsertApplication): Promise<Application> {
-    const result = await db.insert(applications).values([insertApplication]).returning();
+    const result = await db.insert(applications).values({
+      paddockId: insertApplication.paddockId,
+      operator: insertApplication.operator,
+      farm: insertApplication.farm,
+      applicationDate: insertApplication.applicationDate,
+      waterRate: insertApplication.waterRate,
+      area: insertApplication.area,
+      chemicals: insertApplication.chemicals as any, // JSONB requires any
+      windSpeed: insertApplication.windSpeed,
+      windDirection: insertApplication.windDirection,
+      temperature: insertApplication.temperature,
+      humidity: insertApplication.humidity,
+      latitude: insertApplication.latitude,
+      longitude: insertApplication.longitude,
+    }).returning();
     return result[0];
   }
 }

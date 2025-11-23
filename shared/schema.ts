@@ -38,14 +38,19 @@ export type Paddock = typeof paddocks.$inferSelect;
 
 export const applications = pgTable("applications", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
-  paddockIds: jsonb("paddock_ids").notNull().$type<string[]>(),
-  operatorName: text("operator_name").notNull(),
-  farmName: text("farm_name").notNull(),
-  tankMixName: text("tank_mix_name").notNull(),
+  paddockId: text("paddock_id").notNull(),
+  operator: text("operator").notNull(),
+  farm: text("farm").notNull(),
+  applicationDate: timestamp("application_date").notNull(),
   waterRate: real("water_rate").notNull(),
-  chemicals: jsonb("chemicals").notNull().$type<Array<{ chemicalName: string; rate: number; unit: string }>>(),
-  weatherData: jsonb("weather_data").notNull().$type<{ windSpeed: number; windDirection: number; temperature: number; humidity: number; timestamp: string }>(),
-  gpsData: jsonb("gps_data").notNull().$type<{ latitude?: number; longitude?: number; accuracy?: number }>(),
+  area: real("area").notNull(),
+  chemicals: jsonb("chemicals").notNull().$type<Array<{ name: string; rate: number; unit: string }>>(),
+  windSpeed: real("wind_speed"),
+  windDirection: real("wind_direction"),
+  temperature: real("temperature"),
+  humidity: real("humidity"),
+  latitude: real("latitude"),
+  longitude: real("longitude"),
   createdAt: timestamp("created_at").notNull().defaultNow(),
 });
 
