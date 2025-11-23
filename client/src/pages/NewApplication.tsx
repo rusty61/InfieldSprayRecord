@@ -221,6 +221,7 @@ export default function NewApplication() {
               size="sm"
               onClick={addChemical}
               data-testid="button-add-chemical"
+              className="text-[#fc0000]"
             >
               <Plus className="w-4 h-4 mr-2" />
               Add Chemical
