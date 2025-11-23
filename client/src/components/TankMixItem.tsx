@@ -29,7 +29,7 @@ export function TankMixItem({
 }: TankMixItemProps) {
   return (
     <div
-      className="border-l-4 border-l-primary rounded-lg p-4 space-y-3 bg-[#171616c7]"
+      className="border-l-4 border-l-primary rounded-lg p-4 space-y-3 bg-[#171616d4] pl-[18px] pr-[18px]"
       data-testid={`tank-mix-item-${id}`}
     >
       <div className="flex items-start justify-between gap-2">
