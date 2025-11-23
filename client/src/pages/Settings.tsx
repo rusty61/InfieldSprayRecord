@@ -70,7 +70,7 @@ export default function Settings() {
                 id="role"
                 defaultValue="Farm Owner"
                 disabled
-                className="mt-1.5"
+                className="mt-1.5 bg-[#093d2bd4]"
                 data-testid="input-role"
               />
             </div>
