@@ -1,4 +1,4 @@
-import { type User, type InsertUser, type Paddock, type InsertPaddock, users, paddocks } from "@shared/schema";
+import { type User, type InsertUser, type Paddock, type InsertPaddock, type Application, type InsertApplication, users, paddocks, applications } from "@shared/schema";
 import { randomUUID } from "crypto";
 import { db } from "./db";
 import { eq } from "drizzle-orm";
@@ -18,6 +18,11 @@ export interface IStorage {
   updatePaddock(id: string, paddock: Partial<InsertPaddock>): Promise<Paddock | undefined>;
   deletePaddock(id: string): Promise<boolean>;
   getPaddocksByProximity(latitude: number, longitude: number): Promise<(Paddock & { distance: number })[]>;
+  
+  // Application methods
+  getAllApplications(): Promise<Application[]>;
+  getApplication(id: string): Promise<Application | undefined>;
+  createApplication(application: InsertApplication): Promise<Application>;
 }
 
 // Validate and sanitize boundary coordinates

@@ -35,3 +35,24 @@ export const insertPaddockSchema = createInsertSchema(paddocks).omit({
 
 export type InsertPaddock = z.infer<typeof insertPaddockSchema>;
 export type Paddock = typeof paddocks.$inferSelect;
+
+export const applications = pgTable("applications", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  paddockIds: jsonb("paddock_ids").notNull().$type<string[]>(),
+  operatorName: text("operator_name").notNull(),
+  farmName: text("farm_name").notNull(),
+  tankMixName: text("tank_mix_name").notNull(),
+  waterRate: real("water_rate").notNull(),
+  chemicals: jsonb("chemicals").notNull().$type<Array<{ chemicalName: string; rate: number; unit: string }>>(),
+  weatherData: jsonb("weather_data").notNull().$type<{ windSpeed: number; windDirection: number; temperature: number; humidity: number; timestamp: string }>(),
+  gpsData: jsonb("gps_data").notNull().$type<{ latitude?: number; longitude?: number; accuracy?: number }>(),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+});
+
+export const insertApplicationSchema = createInsertSchema(applications).omit({
+  id: true,
+  createdAt: true,
+});
+
+export type InsertApplication = z.infer<typeof insertApplicationSchema>;
+export type Application = typeof applications.$inferSelect;
