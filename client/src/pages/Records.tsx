@@ -120,7 +120,7 @@ export default function Records() {
 
         <div className="space-y-3">
           {filteredApplications.map((app) => (
-            <Card key={app.id} className="p-4 md:p-6" data-testid={`record-${app.id}`}>
+            <Card key={app.id} className="p-4 md:p-6 text-[#fcb32c]" data-testid={`record-${app.id}`}>
               <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 text-[#fcb32c]">
                 <div className="flex-1 space-y-2">
                   <div className="flex items-start justify-between">
