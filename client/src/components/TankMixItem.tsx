@@ -42,7 +42,7 @@ export function TankMixItem({
             value={chemicalName}
             onChange={(e) => onUpdate?.(id, "chemicalName", e.target.value)}
             placeholder="e.g., Glyphosate 540"
-            className="mt-1.5"
+            className="mt-1.5 bg-[#fcb32c]"
             data-testid={`input-chemical-name-${id}`}
           />
         </div>
