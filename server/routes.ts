@@ -83,7 +83,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const application = await storage.createApplication(validatedData);
       res.status(201).json(application);
     } catch (error) {
-      res.status(400).json({ error: "Invalid application data" });
+      console.error("Application validation error:", error);
+      console.error("Request body:", req.body);
+      const errorMessage = error instanceof Error ? error.message : "Invalid application data";
+      res.status(400).json({ error: errorMessage });
     }
   });
 
