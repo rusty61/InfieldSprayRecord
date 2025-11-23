@@ -167,7 +167,7 @@ export default function NewApplication() {
             <Input
               id="operator"
               placeholder="John Davis"
-              className="mt-1.5"
+              className="mt-1.5 bg-[#121212db]"
               data-testid="input-operator"
               value={operator}
               onChange={(e) => setOperator(e.target.value)}
@@ -181,7 +181,7 @@ export default function NewApplication() {
             <Input
               id="farm"
               placeholder="Riverside Farm"
-              className="mt-1.5 bg-[#0d0d0dc4]"
+              className="mt-1.5 bg-[#121111e6]"
               data-testid="input-farm"
               value={farm}
               onChange={(e) => setFarm(e.target.value)}
