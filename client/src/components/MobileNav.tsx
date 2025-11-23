@@ -23,10 +23,7 @@ export function MobileNav() {
             <Link key={item.path} href={item.path}>
               <div
                 data-testid={`nav-${item.label.toLowerCase()}`}
-                className={cn(
-                  "flex flex-col items-center justify-center min-w-[64px] h-12 rounded-lg transition-colors hover-elevate active-elevate-2 cursor-pointer",
-                  isActive && "bg-primary/10"
-                )}
+                className="flex flex-col items-center justify-center min-w-[64px] h-12 rounded-lg transition-colors hover-elevate active-elevate-2 cursor-pointer bg-primary/10 text-[#fcb32c]"
               >
                 <Icon
                   className={cn(
