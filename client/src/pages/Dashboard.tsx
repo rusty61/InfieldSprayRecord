@@ -44,7 +44,7 @@ export default function Dashboard() {
         <div className="flex items-center justify-between">
           <div>
             <h2 className="text-2xl font-semibold text-[#fcb32c]">Welcome back</h2>
-            <p className="text-sm text-muted-foreground mt-1">
+            <p className="text-sm mt-1 text-[#fcb32c]">
               Track your spray applications and maintain compliance
             </p>
           </div>
