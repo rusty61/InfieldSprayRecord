@@ -159,7 +159,7 @@ export default function Paddocks() {
 
   return (
     <div className="min-h-screen bg-background pb-20 md:pb-6">
-      <header className="p-4 md:p-6 text-[#fcb32c] bg-[093d2b]">
+      <header className="p-4 md:p-6 text-[#fcb32c] bg-[#093d2b]">
         <div className="max-w-4xl mx-auto">
           <h1 className="text-2xl font-bold text-[#fcb32c]">Paddock Management</h1>
           <p className="text-sm opacity-90 mt-1 text-[#fcb32c]">Manage your farm paddocks and GPS boundaries</p>
