@@ -22,10 +22,9 @@ export default function Settings() {
   return (
     <div className="min-h-screen bg-background pb-20 md:pb-6">
       <AppHeader title="Settings" />
-
       <main className="p-4 md:p-6 space-y-6 max-w-4xl mx-auto">
         <div>
-          <h2 className="text-2xl font-semibold mb-2">Settings</h2>
+          <h2 className="text-2xl font-semibold mb-2 text-[#fcb32c]">Settings</h2>
           <p className="text-sm text-muted-foreground">
             Manage your account and application preferences
           </p>
