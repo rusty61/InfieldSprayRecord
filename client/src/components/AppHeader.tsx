@@ -15,7 +15,7 @@ export function AppHeader({ title, onMenuClick }: AppHeaderProps) {
 
   return (
     <header className="sticky top-0 z-40 bg-card/95 backdrop-blur border-b border-card-border">
-      <div className="flex items-center justify-between h-14 px-4 gap-4">
+      <div className="flex items-center justify-between h-14 px-4 gap-4 text-[#fcb32c]">
         <div className="flex items-center gap-3">
           {onMenuClick && (
             <Button
