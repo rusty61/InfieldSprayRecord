@@ -38,7 +38,7 @@ export default function Dashboard() {
   ];
 
   return (
-    <div className="min-h-screen bg-background pb-20 md:pb-6">
+    <div className="min-h-screen pb-20 md:pb-6 text-[#fcb32c] bg-[#000000]">
       <AppHeader title="Dashboard" />
       <main className="p-4 md:p-6 space-y-6 max-w-6xl mx-auto text-[#fcb32c] bg-[#000000d6]">
         <div className="flex items-center justify-between">
