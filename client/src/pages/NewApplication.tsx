@@ -151,7 +151,7 @@ export default function NewApplication() {
   return (
     <div className="min-h-screen bg-background pb-20 md:pb-6">
       <AppHeader title="New Application" />
-      <main className="p-4 md:p-6 space-y-6 max-w-4xl mx-auto">
+      <main className="p-4 md:p-6 space-y-6 max-w-4xl mx-auto text-[#fcb32c] bg-[#000000]">
         <div>
           <h2 className="text-2xl font-semibold mb-2">Create Application Record</h2>
           <p className="text-sm text-muted-foreground">
