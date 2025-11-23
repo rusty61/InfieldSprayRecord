@@ -28,7 +28,7 @@ export function AppHeader({ title, onMenuClick }: AppHeaderProps) {
               <Menu className="w-5 h-5" />
             </Button>
           )}
-          <h1 className="text-lg font-semibold truncate">{title}</h1>
+          <h1 className="text-lg font-semibold truncate text-[#ffffff]">{title}</h1>
         </div>
 
         <div className="flex items-center gap-2">
