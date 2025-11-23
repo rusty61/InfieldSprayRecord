@@ -61,7 +61,7 @@ export default function Dashboard() {
           {stats.map((stat) => {
             const Icon = stat.icon;
             return (
-              <Card key={stat.label} className="p-6" data-testid={`stat-${stat.label.toLowerCase().replace(/\s+/g, '-')}`}>
+              <Card key={stat.label} className="p-6 text-[19px]" data-testid={`stat-${stat.label.toLowerCase().replace(/\s+/g, '-')}`}>
                 <div className="flex items-start justify-between mb-2">
                   <Icon className="w-5 h-5 text-primary" />
                 </div>
