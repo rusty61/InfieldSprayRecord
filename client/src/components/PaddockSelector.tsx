@@ -85,7 +85,7 @@ export function PaddockSelector({
             variant="outline"
             role="combobox"
             aria-expanded={open}
-            className="w-full justify-between h-12"
+            className="w-full justify-between h-12 text-[#fcb32c]"
             data-testid="button-select-paddocks"
           >
             <div className="flex items-center gap-2">
