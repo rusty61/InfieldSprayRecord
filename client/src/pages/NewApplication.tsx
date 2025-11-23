@@ -214,7 +214,7 @@ export default function NewApplication() {
         <Separator />
 
         <div className="space-y-4">
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-between text-[#fcb32c]">
             <h3 className="text-lg font-semibold">Tank Mix</h3>
             <Button
               variant="outline"
