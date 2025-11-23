@@ -102,7 +102,7 @@ export default function Records() {
               />
             </div>
             <Select value={filterFarm} onValueChange={setFilterFarm}>
-              <SelectTrigger className="md:w-[200px]" data-testid="select-farm-filter">
+              <SelectTrigger className="md:w-[200px] text-[#fcb32c] bg-[#093d2bcc]" data-testid="select-farm-filter">
                 <SelectValue placeholder="Filter by farm" />
               </SelectTrigger>
               <SelectContent>
