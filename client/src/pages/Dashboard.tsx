@@ -61,7 +61,7 @@ export default function Dashboard() {
           {stats.map((stat) => {
             const Icon = stat.icon;
             return (
-              <Card key={stat.label} className="p-6 text-[19px]" data-testid={`stat-${stat.label.toLowerCase().replace(/\s+/g, '-')}`}>
+              <Card key={stat.label} className="p-6 text-[19px] text-[#fcb32c]" data-testid={`stat-${stat.label.toLowerCase().replace(/\s+/g, '-')}`}>
                 <div className="flex items-start justify-between mb-2">
                   <Icon className="w-5 h-5 text-primary" />
                 </div>
@@ -72,7 +72,7 @@ export default function Dashboard() {
           })}
         </div>
 
-        <Card className="p-6">
+        <Card className="p-6 text-[#fcb32c]">
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-lg font-semibold">Recent Applications</h3>
             <Link href="/records">
