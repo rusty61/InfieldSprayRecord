@@ -15,7 +15,7 @@ export function MobileNav() {
 
   return (
     <nav className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-card border-t border-card-border">
-      <div className="h-16 flex items-center justify-around px-2 text-[#fcb32c]">
+      <div className="h-16 flex items-center justify-around px-2 text-[#fcb32c] bg-[#000000]">
         {navItems.map((item) => {
           const Icon = item.icon;
           const isActive = location === item.path;
