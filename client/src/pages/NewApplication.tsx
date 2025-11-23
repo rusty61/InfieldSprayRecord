@@ -195,7 +195,7 @@ export default function NewApplication() {
             <Input
               id="date"
               type="datetime-local"
-              className="mt-1.5"
+              className="mt-1.5 bg-[#1a1a1a]"
               data-testid="input-datetime"
               value={applicationDate}
               onChange={(e) => setApplicationDate(e.target.value)}
