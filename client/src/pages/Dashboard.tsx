@@ -40,11 +40,10 @@ export default function Dashboard() {
   return (
     <div className="min-h-screen bg-background pb-20 md:pb-6">
       <AppHeader title="Dashboard" />
-
       <main className="p-4 md:p-6 space-y-6 max-w-6xl mx-auto">
         <div className="flex items-center justify-between">
           <div>
-            <h2 className="text-2xl font-semibold">Welcome back</h2>
+            <h2 className="text-2xl font-semibold text-[#fcb32c]">Welcome back</h2>
             <p className="text-sm text-muted-foreground mt-1">
               Track your spray applications and maintain compliance
             </p>
