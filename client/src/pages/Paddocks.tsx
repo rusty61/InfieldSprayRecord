@@ -170,7 +170,7 @@ export default function Paddocks() {
           <h2 className="text-lg font-semibold">Your Paddocks ({paddocks.length})</h2>
           <Dialog open={isCreating} onOpenChange={setIsCreating}>
             <DialogTrigger asChild>
-              <Button className="bg-[#093d2b]" data-testid="button-create-paddock">
+              <Button className="bg-[#093d2b] text-[#fcb32c]" data-testid="button-create-paddock">
                 <Plus className="w-4 h-4 mr-2" />
                 Create Paddock
               </Button>
