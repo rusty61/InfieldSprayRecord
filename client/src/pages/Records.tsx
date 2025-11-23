@@ -82,7 +82,7 @@ export default function Records() {
             </p>
           </div>
           <Link href="/paddocks">
-            <Button data-testid="button-new-paddock">
+            <Button data-testid="button-new-paddock" className="bg-[#093d2b] text-[#fcb32c]">
               <MapPin className="w-4 h-4 mr-2" />
               New Paddock
             </Button>
