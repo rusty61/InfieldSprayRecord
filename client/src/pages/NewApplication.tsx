@@ -240,7 +240,7 @@ export default function NewApplication() {
                 onChange={(e) =>
                   setTankMix({ ...tankMix, waterRate: parseFloat(e.target.value) || 0 })
                 }
-                className="mt-1.5 text-right"
+                className="mt-1.5 text-right bg-[#000000]"
                 data-testid="input-water-rate"
               />
             </div>
