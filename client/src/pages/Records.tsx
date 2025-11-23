@@ -111,7 +111,7 @@ export default function Records() {
                 <SelectItem value="Hillside Farm">Hillside Farm</SelectItem>
               </SelectContent>
             </Select>
-            <Button variant="outline" data-testid="button-export">
+            <Button variant="outline" className="text-[#fcb32c]" data-testid="button-export">
               <Download className="w-4 h-4 mr-2" />
               Export
             </Button>
