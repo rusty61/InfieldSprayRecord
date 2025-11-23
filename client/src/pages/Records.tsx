@@ -121,7 +121,7 @@ export default function Records() {
         <div className="space-y-3">
           {filteredApplications.map((app) => (
             <Card key={app.id} className="p-4 md:p-6" data-testid={`record-${app.id}`}>
-              <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+              <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 text-[#fcb32c]">
                 <div className="flex-1 space-y-2">
                   <div className="flex items-start justify-between">
                     <div>
@@ -135,7 +135,7 @@ export default function Records() {
 
                   <div className="flex flex-wrap gap-2">
                     {app.chemicals.map((chemical) => (
-                      <Badge key={chemical} variant="outline" className="text-xs">
+                      <Badge key={chemical} variant="outline" className="text-xs text-[#fcb32c]">
                         {chemical}
                       </Badge>
                     ))}
