@@ -160,7 +160,7 @@ export default function NewApplication() {
           </p>
         </div>
 
-        <Card className="p-6 space-y-4">
+        <Card className="p-6 space-y-4 text-[#fcb32c]">
           <div>
             <Label htmlFor="operator" className="text-sm font-medium">
               Operator Name
@@ -259,7 +259,7 @@ export default function NewApplication() {
           </div>
 
           {selectedPaddocks.length > 0 && (
-            <Card className="p-4 bg-accent/50">
+            <Card className="p-4 bg-accent/50 text-[#fcb32c]">
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <p className="text-sm text-muted-foreground mb-1">Total Water</p>

@@ -31,7 +31,7 @@ export default function Settings() {
           </p>
         </div>
 
-        <Card className="p-6 space-y-6">
+        <Card className="p-6 space-y-6 text-[#fcb32c]">
           <div className="flex items-center gap-3">
             <User className="w-5 h-5 text-primary" />
             <h3 className="text-lg font-semibold">Profile</h3>
@@ -78,7 +78,7 @@ export default function Settings() {
           </div>
         </Card>
 
-        <Card className="p-6 space-y-6">
+        <Card className="p-6 space-y-6 text-[#fcb32c]">
           <div className="flex items-center gap-3">
             <Bell className="w-5 h-5 text-primary" />
             <h3 className="text-lg font-semibold">Notifications</h3>
@@ -113,7 +113,7 @@ export default function Settings() {
           </div>
         </Card>
 
-        <Card className="p-6 space-y-6">
+        <Card className="p-6 space-y-6 text-[#fcb32c]">
           <div className="flex items-center gap-3">
             <Database className="w-5 h-5 text-primary" />
             <h3 className="text-lg font-semibold">Data & Storage</h3>
@@ -146,7 +146,7 @@ export default function Settings() {
           </div>
         </Card>
 
-        <Card className="p-6 space-y-6">
+        <Card className="p-6 space-y-6 text-[#fcb32c]">
           <div className="flex items-center gap-3">
             <Shield className="w-5 h-5 text-primary" />
             <h3 className="text-lg font-semibold">Security</h3>

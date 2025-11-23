@@ -296,7 +296,7 @@ export default function Paddocks() {
         {isLoading ? (
           <div className="text-center py-8 text-muted-foreground">Loading paddocks...</div>
         ) : paddocks.length === 0 ? (
-          <Card className="p-8 text-center">
+          <Card className="p-8 text-center text-[#fcb32c]">
             <MapPin className="w-12 h-12 mx-auto text-muted-foreground mb-4" />
             <h3 className="text-lg font-semibold mb-2">No paddocks yet</h3>
             <p className="text-sm text-muted-foreground mb-4">
