@@ -93,7 +93,7 @@ export default function Settings() {
                   Get notified when data syncs successfully
                 </p>
               </div>
-              <Switch id="sync-notifications" defaultChecked data-testid="switch-sync-notifications" />
+              <Switch id="sync-notifications" defaultChecked data-testid="switch-sync-notifications" className="bg-[#093d2b]" />
             </div>
 
             <Separator />
