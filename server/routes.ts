@@ -4,6 +4,7 @@ import { storage } from "./storage";
 import { insertPaddockSchema, insertApplicationSchema } from "@shared/schema";
 import sgMail from "@sendgrid/mail";
 import { generateAuditPDF } from "./pdf-generator";
+import { generateBatchAuditPDF } from "./pdf-generator-batch";
 
 const sendgridApiKey = process.env.SENDGRID_API_KEY;
 if (sendgridApiKey) {
@@ -169,6 +170,57 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Email send error:", error);
       res.status(500).json({ error: "Failed to send audit report" });
+    }
+  });
+
+  // Export batch applications as PDF via email
+  app.post("/api/applications/export/send-email", async (req, res) => {
+    try {
+      if (!sendgridApiKey) {
+        return res.status(400).json({ error: "Email service not configured" });
+      }
+
+      const { email, applications: appsData } = req.body;
+      if (!email) {
+        return res.status(400).json({ error: "Email address required" });
+      }
+
+      if (!appsData || appsData.length === 0) {
+        return res.status(400).json({ error: "No applications to export" });
+      }
+
+      const pdfBuffer = generateBatchAuditPDF(appsData);
+
+      await sgMail.send({
+        to: email,
+        from: process.env.SENDGRID_FROM_EMAIL || "noreply@infield-spray.com",
+        subject: `Spray Application Batch Export - ${appsData.length} records`,
+        html: `
+          <h2>Spray Application Batch Export</h2>
+          <p>Please find attached your spray application records export.</p>
+          <p><strong>Export Summary:</strong></p>
+          <ul>
+            <li>Total Records: ${appsData.length}</li>
+            <li>Total Area: ${appsData.reduce((sum: number, app: any) => sum + app.area, 0).toFixed(1)} hectares</li>
+            <li>Generated: ${new Date().toLocaleDateString("en-AU")}</li>
+          </ul>
+          <p>This export is retained for audit compliance purposes.</p>
+          <p>Best regards,<br>Infield Spray Record System</p>
+        `,
+        attachments: [
+          {
+            content: pdfBuffer.toString("base64"),
+            filename: `spray-records-${new Date().toISOString().split("T")[0]}.pdf`,
+            type: "application/pdf",
+            disposition: "attachment",
+          },
+        ],
+      });
+
+      res.json({ success: true, message: "Records exported successfully" });
+    } catch (error) {
+      console.error("Export email error:", error);
+      res.status(500).json({ error: "Failed to export records" });
     }
   });
 

@@ -31,6 +31,7 @@ export default function Records() {
   const [emailDialogOpen, setEmailDialogOpen] = useState(false);
   const [selectedAppId, setSelectedAppId] = useState<string | null>(null);
   const [emailAddress, setEmailAddress] = useState("");
+  const [exportMode, setExportMode] = useState<"single" | "all" | null>(null);
 
   // todo: remove mock functionality
   const applications = [
@@ -42,6 +43,7 @@ export default function Records() {
       operator: "John Davis",
       chemicals: ["Glyphosate 540", "Surfactant"],
       area: 12.5,
+      waterRate: 80,
       status: "completed",
     },
     {
@@ -52,6 +54,7 @@ export default function Records() {
       operator: "Sarah Mitchell",
       chemicals: ["2,4-D Amine"],
       area: 8.3,
+      waterRate: 75,
       status: "completed",
     },
     {
@@ -62,6 +65,7 @@ export default function Records() {
       operator: "John Davis",
       chemicals: ["Triclopyr", "Surfactant"],
       area: 15.2,
+      waterRate: 90,
       status: "completed",
     },
     {
@@ -72,12 +76,25 @@ export default function Records() {
       operator: "Sarah Mitchell",
       chemicals: ["Glyphosate 540"],
       area: 6.8,
+      waterRate: 70,
       status: "completed",
     },
   ];
 
   const sendEmailMutation = useMutation({
-    mutationFn: async ({ appId, email }: { appId: string; email: string }) => {
+    mutationFn: async ({ appId, email, isExport }: { appId?: string; email: string; isExport?: boolean }) => {
+      if (isExport && exportMode === "all") {
+        const response = await fetch(`/api/applications/export/send-email`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email, applications: filteredApplications }),
+        });
+        if (!response.ok) {
+          throw new Error("Failed to send export");
+        }
+        return response.json();
+      }
+      
       const response = await fetch(`/api/applications/${appId}/send-email`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -89,25 +106,27 @@ export default function Records() {
       return response.json();
     },
     onSuccess: () => {
+      const message = exportMode === "all" ? "All records exported and sent to your email successfully." : "Audit report sent to your email successfully.";
       toast({
         title: "Success",
-        description: "Audit report sent to your email successfully.",
+        description: message,
       });
       setEmailDialogOpen(false);
       setEmailAddress("");
       setSelectedAppId(null);
+      setExportMode(null);
     },
     onError: () => {
       toast({
         title: "Error",
-        description: "Failed to send audit report. Please try again.",
+        description: "Failed to send email. Please try again.",
         variant: "destructive",
       });
     },
   });
 
   const handleSendEmail = () => {
-    if (!emailAddress || !selectedAppId) {
+    if (!emailAddress) {
       toast({
         title: "Error",
         description: "Please enter an email address.",
@@ -115,7 +134,11 @@ export default function Records() {
       });
       return;
     }
-    sendEmailMutation.mutate({ appId: selectedAppId, email: emailAddress });
+    if (exportMode === "all") {
+      sendEmailMutation.mutate({ email: emailAddress, isExport: true });
+    } else if (selectedAppId) {
+      sendEmailMutation.mutate({ appId: selectedAppId, email: emailAddress });
+    }
   };
 
   const filteredApplications = applications.filter((app) => {
@@ -172,32 +195,12 @@ export default function Records() {
               className="text-[#fcb32c]" 
               data-testid="button-export"
               onClick={() => {
-                const csv = [
-                  ["Date", "Farm", "Paddock", "Operator", "Area (ha)", "Water Rate (L/ha)", "Chemicals"].join(","),
-                  ...filteredApplications.map(app =>
-                    [
-                      new Date(app.date).toLocaleDateString("en-AU"),
-                      app.farm,
-                      app.paddock,
-                      app.operator,
-                      app.area,
-                      app.waterRate,
-                      app.chemicals.join("; ")
-                    ].map(v => `"${String(v).replace(/"/g, '""')}"`).join(",")
-                  )
-                ].join("\n");
-                
-                const blob = new Blob([csv], { type: "text/csv" });
-                const url = window.URL.createObjectURL(blob);
-                const a = document.createElement("a");
-                a.href = url;
-                a.download = `spray-records-${new Date().toISOString().split("T")[0]}.csv`;
-                a.click();
-                window.URL.revokeObjectURL(url);
+                setExportMode("all");
+                setEmailDialogOpen(true);
               }}
             >
               <Download className="w-4 h-4 mr-2" />
-              Export
+              Export PDF
             </Button>
           </div>
         </Card>
@@ -282,9 +285,11 @@ export default function Records() {
       <Dialog open={emailDialogOpen} onOpenChange={setEmailDialogOpen}>
         <DialogContent className="bg-[#1a1a1a] border-[#333] text-[#fcb32c]">
           <DialogHeader>
-            <DialogTitle>Send Audit Report</DialogTitle>
+            <DialogTitle>{exportMode === "all" ? "Export All Records" : "Send Audit Report"}</DialogTitle>
             <DialogDescription className="text-muted-foreground">
-              Enter your email address to receive the spray application audit report as a PDF.
+              {exportMode === "all" 
+                ? `Enter your email address to receive all ${filteredApplications.length} spray application records as a PDF.`
+                : "Enter your email address to receive the spray application audit report as a PDF."}
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-4">
