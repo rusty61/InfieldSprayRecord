@@ -1,4 +1,4 @@
-import { type User, type InsertUser, type Paddock, type InsertPaddock, type Application, type InsertApplication, users, paddocks, applications } from "@shared/schema";
+import { type User, type InsertUser, type Paddock, type InsertPaddock, type Application, type InsertApplication, type Recommendation, type InsertRecommendation, users, paddocks, applications, recommendations } from "@shared/schema";
 import { randomUUID } from "crypto";
 import { db } from "./db";
 import { eq } from "drizzle-orm";
@@ -23,6 +23,10 @@ export interface IStorage {
   getAllApplications(): Promise<Application[]>;
   getApplication(id: string): Promise<Application | undefined>;
   createApplication(application: InsertApplication): Promise<Application>;
+  
+  // Recommendation methods
+  getRecommendationsByApplicationId(applicationId: string): Promise<Recommendation[]>;
+  createRecommendation(recommendation: InsertRecommendation): Promise<Recommendation>;
 }
 
 // Validate and sanitize boundary coordinates
@@ -214,6 +218,15 @@ export class MemStorage implements IStorage {
       latitude: insertApplication.latitude,
       longitude: insertApplication.longitude,
     }).returning();
+    return result[0];
+  }
+
+  async getRecommendationsByApplicationId(applicationId: string): Promise<Recommendation[]> {
+    return await db.select().from(recommendations).where(eq(recommendations.applicationId, applicationId));
+  }
+
+  async createRecommendation(insertRecommendation: InsertRecommendation): Promise<Recommendation> {
+    const result = await db.insert(recommendations).values(insertRecommendation).returning();
     return result[0];
   }
 }

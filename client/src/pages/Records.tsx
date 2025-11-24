@@ -21,8 +21,9 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
-import { Search, Download, Eye, Calendar, MapPin, Mail } from "lucide-react";
+import { Search, Download, Eye, Calendar, MapPin, Mail, AlertCircle, CheckCircle2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 
 export default function Records() {
   const { toast } = useToast();
@@ -45,6 +46,10 @@ export default function Records() {
       area: 12.5,
       waterRate: 80,
       status: "completed",
+      recommendations: [
+        { id: "r1", agronomer: "Dr. Sarah Green", recommendation: "Reduce water rate by 10% in next application - excellent coverage achieved", priority: "medium" },
+        { id: "r2", agronomer: "Dr. Sarah Green", recommendation: "Monitor for runoff on slopes", priority: "high" },
+      ],
     },
     {
       id: "2",
@@ -56,6 +61,9 @@ export default function Records() {
       area: 8.3,
       waterRate: 75,
       status: "completed",
+      recommendations: [
+        { id: "r3", agronomer: "Dr. Sarah Green", recommendation: "Application timing was optimal. Good control of broadleaf weeds", priority: "low" },
+      ],
     },
     {
       id: "3",
@@ -67,6 +75,9 @@ export default function Records() {
       area: 15.2,
       waterRate: 90,
       status: "completed",
+      recommendations: [
+        { id: "r4", agronomer: "Dr. Sarah Green", recommendation: "Wind conditions were suboptimal during spray. Consider early morning applications", priority: "high" },
+      ],
     },
     {
       id: "4",
@@ -78,6 +89,7 @@ export default function Records() {
       area: 6.8,
       waterRate: 70,
       status: "completed",
+      recommendations: [],
     },
   ];
 
@@ -271,6 +283,41 @@ export default function Records() {
                   </Button>
                 </div>
               </div>
+
+              {app.recommendations && app.recommendations.length > 0 && (
+                <div className="mt-4 border-t border-[#333] pt-4">
+                  <Collapsible>
+                    <CollapsibleTrigger className="flex items-center gap-2 text-[#fcb32c] hover:text-[#ffd966] transition-colors" data-testid={`button-recommendations-${app.id}`}>
+                      <AlertCircle className="w-4 h-4" />
+                      <span className="font-semibold">{app.recommendations.length} Agronomist Recommendation{app.recommendations.length !== 1 ? "s" : ""}</span>
+                    </CollapsibleTrigger>
+                    <CollapsibleContent className="mt-3 space-y-2">
+                      {app.recommendations.map((rec: any) => (
+                        <Card key={rec.id} className="p-3 bg-[#0a2b1f] border-[#093d2b]" data-testid={`recommendation-${rec.id}`}>
+                          <div className="flex gap-2 items-start">
+                            {rec.priority === "high" ? (
+                              <AlertCircle className="w-5 h-5 text-[#ff6b6b] flex-shrink-0 mt-0.5" />
+                            ) : rec.priority === "medium" ? (
+                              <AlertCircle className="w-5 h-5 text-[#fcb32c] flex-shrink-0 mt-0.5" />
+                            ) : (
+                              <CheckCircle2 className="w-5 h-5 text-[#51cf66] flex-shrink-0 mt-0.5" />
+                            )}
+                            <div className="flex-1">
+                              <div className="flex items-center gap-2 mb-1">
+                                <span className="text-sm font-semibold text-[#fcb32c]">{rec.agronomer}</span>
+                                <Badge variant="outline" className={`text-xs ${rec.priority === "high" ? "text-[#ff6b6b]" : rec.priority === "medium" ? "text-[#fcb32c]" : "text-[#51cf66]"}`}>
+                                  {rec.priority.charAt(0).toUpperCase() + rec.priority.slice(1)}
+                                </Badge>
+                              </div>
+                              <p className="text-sm text-muted-foreground">{rec.recommendation}</p>
+                            </div>
+                          </div>
+                        </Card>
+                      ))}
+                    </CollapsibleContent>
+                  </Collapsible>
+                </div>
+              )}
             </Card>
           ))}
         </div>

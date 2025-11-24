@@ -224,6 +224,36 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Get recommendations for an application
+  app.get("/api/applications/:id/recommendations", async (req, res) => {
+    try {
+      const recommendations = await storage.getRecommendationsByApplicationId(req.params.id);
+      res.json(recommendations);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch recommendations" });
+    }
+  });
+
+  // Create a recommendation
+  app.post("/api/applications/:id/recommendations", async (req, res) => {
+    try {
+      const { agronomer, recommendation, priority } = req.body;
+      if (!agronomer || !recommendation) {
+        return res.status(400).json({ error: "Agronomer and recommendation text required" });
+      }
+
+      const rec = await storage.createRecommendation({
+        applicationId: req.params.id,
+        agronomer,
+        recommendation,
+        priority: priority || "medium",
+      });
+      res.status(201).json(rec);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to create recommendation" });
+    }
+  });
+
   const httpServer = createServer(app);
 
   return httpServer;
