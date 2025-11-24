@@ -21,9 +21,8 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
-import { Search, Download, Eye, Calendar, MapPin, Mail, AlertCircle, CheckCircle2 } from "lucide-react";
+import { Search, Download, Eye, Calendar, MapPin, Mail, AlertCircle, CheckCircle2, ChevronDown } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 
 export default function Records() {
   const { toast } = useToast();
@@ -33,6 +32,7 @@ export default function Records() {
   const [selectedAppId, setSelectedAppId] = useState<string | null>(null);
   const [emailAddress, setEmailAddress] = useState("");
   const [exportMode, setExportMode] = useState<"single" | "all" | null>(null);
+  const [expandedRecos, setExpandedRecos] = useState<Set<string>>(new Set());
 
   // todo: remove mock functionality
   const applications = [
@@ -286,12 +286,25 @@ export default function Records() {
 
               {app.recommendations && app.recommendations.length > 0 && (
                 <div className="mt-4 border-t border-[#333] pt-4">
-                  <Collapsible>
-                    <CollapsibleTrigger className="flex items-center gap-2 text-[#fcb32c] hover:text-[#ffd966] transition-colors" data-testid={`button-recommendations-${app.id}`}>
-                      <AlertCircle className="w-4 h-4" />
-                      <span className="font-semibold">{app.recommendations.length} Agronomist Recommendation{app.recommendations.length !== 1 ? "s" : ""}</span>
-                    </CollapsibleTrigger>
-                    <CollapsibleContent className="mt-3 space-y-2">
+                  <button 
+                    onClick={() => {
+                      const newExpanded = new Set(expandedRecos);
+                      if (newExpanded.has(app.id)) {
+                        newExpanded.delete(app.id);
+                      } else {
+                        newExpanded.add(app.id);
+                      }
+                      setExpandedRecos(newExpanded);
+                    }}
+                    className="flex items-center gap-2 text-[#fcb32c] hover:text-[#ffd966] transition-colors" 
+                    data-testid={`button-recommendations-${app.id}`}
+                  >
+                    <ChevronDown className={`w-4 h-4 transition-transform ${expandedRecos.has(app.id) ? "rotate-180" : ""}`} />
+                    <AlertCircle className="w-4 h-4" />
+                    <span className="font-semibold">{app.recommendations.length} Agronomist Recommendation{app.recommendations.length !== 1 ? "s" : ""}</span>
+                  </button>
+                  {expandedRecos.has(app.id) && (
+                    <div className="mt-3 space-y-2">
                       {app.recommendations.map((rec: any) => (
                         <Card key={rec.id} className="p-3 bg-[#0a2b1f] border-[#093d2b]" data-testid={`recommendation-${rec.id}`}>
                           <div className="flex gap-2 items-start">
@@ -314,8 +327,8 @@ export default function Records() {
                           </div>
                         </Card>
                       ))}
-                    </CollapsibleContent>
-                  </Collapsible>
+                    </div>
+                  )}
                 </div>
               )}
             </Card>

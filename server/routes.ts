@@ -254,7 +254,80 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // SendGrid inbound email webhook for agronomist recommendations
+  app.post("/api/webhook/email-recommendations", async (req, res) => {
+    try {
+      const { from, subject, text, html } = req.body;
+
+      if (!from || !subject || (!text && !html)) {
+        return res.status(400).json({ error: "Missing required email fields" });
+      }
+
+      // Extract application ID from subject line (format: "App-[ID]: ..." or "[ID]")
+      const appIdMatch = subject.match(/(?:App-|@)?([a-f0-9\-]{36}|\d+)/) || 
+                         subject.match(/\[([a-f0-9\-]{36}|\d+)\]/);
+      
+      if (!appIdMatch || !appIdMatch[1]) {
+        return res.status(400).json({ error: "Application ID not found in subject" });
+      }
+
+      const applicationId = appIdMatch[1];
+
+      // Verify application exists
+      const application = await storage.getApplication(applicationId);
+      if (!application) {
+        return res.status(404).json({ error: `Application ${applicationId} not found` });
+      }
+
+      // Extract agronomer name from email sender
+      const agronomerMatch = from.match(/([^<]+)</);
+      const agronomer = agronomerMatch ? agronomerMatch[1].trim() : from.split("@")[0];
+
+      // Use text content, fall back to html
+      const emailContent = text || (html ? stripHtml(html) : "");
+      
+      // Determine priority based on keywords
+      let priority: "low" | "medium" | "high" = "medium";
+      const lowerContent = emailContent.toLowerCase();
+      
+      if (lowerContent.includes("urgent") || lowerContent.includes("critical") || 
+          lowerContent.includes("immediately") || lowerContent.includes("asap")) {
+        priority = "high";
+      } else if (lowerContent.includes("note") || lowerContent.includes("fyi") || 
+                 lowerContent.includes("informational")) {
+        priority = "low";
+      }
+
+      // Create the recommendation
+      const rec = await storage.createRecommendation({
+        applicationId,
+        agronomer,
+        recommendation: emailContent.substring(0, 1000), // Limit to 1000 chars
+        priority,
+      });
+
+      res.status(201).json({
+        success: true,
+        recommendation: rec,
+        message: `Recommendation from ${agronomer} created for application ${applicationId}`,
+      });
+    } catch (error) {
+      console.error("Email webhook error:", error);
+      res.status(500).json({ error: "Failed to process email recommendation" });
+    }
+  });
+
   const httpServer = createServer(app);
 
   return httpServer;
+}
+
+// Helper function to strip HTML tags
+function stripHtml(html: string): string {
+  return html
+    .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, "")
+    .replace(/<style\b[^<]*(?:(?!<\/style>)<[^<]*)*<\/style>/gi, "")
+    .replace(/<[^>]+>/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
 }
