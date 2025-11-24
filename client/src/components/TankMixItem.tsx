@@ -81,7 +81,7 @@ export function TankMixItem({
           >
             <SelectTrigger
               id={`unit-${id}`}
-              className="mt-1.5 bg-[#fcb32c]"
+              className="mt-1.5 bg-[#080808fa]"
               data-testid={`select-unit-${id}`}
             >
               <SelectValue />
