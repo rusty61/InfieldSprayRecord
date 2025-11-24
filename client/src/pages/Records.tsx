@@ -167,7 +167,35 @@ export default function Records() {
                 <SelectItem value="Hillside Farm">Hillside Farm</SelectItem>
               </SelectContent>
             </Select>
-            <Button variant="outline" className="text-[#fcb32c]" data-testid="button-export">
+            <Button 
+              variant="outline" 
+              className="text-[#fcb32c]" 
+              data-testid="button-export"
+              onClick={() => {
+                const csv = [
+                  ["Date", "Farm", "Paddock", "Operator", "Area (ha)", "Water Rate (L/ha)", "Chemicals"].join(","),
+                  ...filteredApplications.map(app =>
+                    [
+                      new Date(app.date).toLocaleDateString("en-AU"),
+                      app.farm,
+                      app.paddock,
+                      app.operator,
+                      app.area,
+                      app.waterRate,
+                      app.chemicals.join("; ")
+                    ].map(v => `"${String(v).replace(/"/g, '""')}"`).join(",")
+                  )
+                ].join("\n");
+                
+                const blob = new Blob([csv], { type: "text/csv" });
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement("a");
+                a.href = url;
+                a.download = `spray-records-${new Date().toISOString().split("T")[0]}.csv`;
+                a.click();
+                window.URL.revokeObjectURL(url);
+              }}
+            >
               <Download className="w-4 h-4 mr-2" />
               Export
             </Button>
