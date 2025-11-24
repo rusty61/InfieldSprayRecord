@@ -2,6 +2,13 @@ import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { insertPaddockSchema, insertApplicationSchema } from "@shared/schema";
+import sgMail from "@sendgrid/mail";
+import { generateAuditPDF } from "./pdf-generator";
+
+const sendgridApiKey = process.env.SENDGRID_API_KEY;
+if (sendgridApiKey) {
+  sgMail.setApiKey(sendgridApiKey);
+}
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Paddock routes
@@ -87,6 +94,81 @@ export async function registerRoutes(app: Express): Promise<Server> {
       console.error("Request body:", req.body);
       const errorMessage = error instanceof Error ? error.message : "Invalid application data";
       res.status(400).json({ error: errorMessage });
+    }
+  });
+
+  app.get("/api/applications", async (req, res) => {
+    try {
+      const applications = await storage.getAllApplications();
+      res.json(applications);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch applications" });
+    }
+  });
+
+  app.get("/api/applications/:id", async (req, res) => {
+    try {
+      const application = await storage.getApplication(req.params.id);
+      if (!application) {
+        return res.status(404).json({ error: "Application not found" });
+      }
+      res.json(application);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch application" });
+    }
+  });
+
+  // Email audit report endpoint
+  app.post("/api/applications/:id/send-email", async (req, res) => {
+    try {
+      if (!sendgridApiKey) {
+        return res.status(400).json({ error: "Email service not configured" });
+      }
+
+      const { email } = req.body;
+      if (!email) {
+        return res.status(400).json({ error: "Email address required" });
+      }
+
+      const application = await storage.getApplication(req.params.id);
+      if (!application) {
+        return res.status(404).json({ error: "Application not found" });
+      }
+
+      const paddock = await storage.getPaddock(application.paddockId);
+      const pdfBuffer = generateAuditPDF(application, paddock || null);
+
+      await sgMail.send({
+        to: email,
+        from: process.env.SENDGRID_FROM_EMAIL || "noreply@infield-spray.com",
+        subject: `Spray Application Audit Report - ${application.farm}`,
+        html: `
+          <h2>Spray Application Audit Report</h2>
+          <p>Dear ${application.operator},</p>
+          <p>Please find attached the audit report for your spray application on <strong>${application.farm}</strong>.</p>
+          <p><strong>Application Details:</strong></p>
+          <ul>
+            <li>Date: ${new Date(application.applicationDate).toLocaleDateString("en-AU")}</li>
+            <li>Area: ${application.area} hectares</li>
+            <li>Water Rate: ${application.waterRate} L/ha</li>
+          </ul>
+          <p>This report is retained for audit compliance purposes.</p>
+          <p>Best regards,<br>Infield Spray Record System</p>
+        `,
+        attachments: [
+          {
+            content: pdfBuffer.toString("base64"),
+            filename: `spray-audit-${application.id}.pdf`,
+            type: "application/pdf",
+            disposition: "attachment",
+          },
+        ],
+      });
+
+      res.json({ success: true, message: "Audit report sent successfully" });
+    } catch (error) {
+      console.error("Email send error:", error);
+      res.status(500).json({ error: "Failed to send audit report" });
     }
   });
 

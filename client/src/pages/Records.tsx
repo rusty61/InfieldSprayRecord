@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Link } from "wouter";
+import { useMutation } from "@tanstack/react-query";
 import { AppHeader } from "@/components/AppHeader";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -12,11 +13,24 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Search, Download, Eye, Calendar, MapPin } from "lucide-react";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Label } from "@/components/ui/label";
+import { Search, Download, Eye, Calendar, MapPin, Mail } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 
 export default function Records() {
+  const { toast } = useToast();
   const [searchQuery, setSearchQuery] = useState("");
   const [filterFarm, setFilterFarm] = useState("all");
+  const [emailDialogOpen, setEmailDialogOpen] = useState(false);
+  const [selectedAppId, setSelectedAppId] = useState<string | null>(null);
+  const [emailAddress, setEmailAddress] = useState("");
 
   // todo: remove mock functionality
   const applications = [
@@ -61,6 +75,48 @@ export default function Records() {
       status: "completed",
     },
   ];
+
+  const sendEmailMutation = useMutation({
+    mutationFn: async ({ appId, email }: { appId: string; email: string }) => {
+      const response = await fetch(`/api/applications/${appId}/send-email`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email }),
+      });
+      if (!response.ok) {
+        throw new Error("Failed to send email");
+      }
+      return response.json();
+    },
+    onSuccess: () => {
+      toast({
+        title: "Success",
+        description: "Audit report sent to your email successfully.",
+      });
+      setEmailDialogOpen(false);
+      setEmailAddress("");
+      setSelectedAppId(null);
+    },
+    onError: () => {
+      toast({
+        title: "Error",
+        description: "Failed to send audit report. Please try again.",
+        variant: "destructive",
+      });
+    },
+  });
+
+  const handleSendEmail = () => {
+    if (!emailAddress || !selectedAppId) {
+      toast({
+        title: "Error",
+        description: "Please enter an email address.",
+        variant: "destructive",
+      });
+      return;
+    }
+    sendEmailMutation.mutate({ appId: selectedAppId, email: emailAddress });
+  };
 
   const filteredApplications = applications.filter((app) => {
     const matchesSearch =
@@ -170,6 +226,18 @@ export default function Records() {
                     <Download className="w-4 h-4 md:mr-2" />
                     <span className="hidden md:inline">PDF</span>
                   </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => {
+                      setSelectedAppId(app.id);
+                      setEmailDialogOpen(true);
+                    }}
+                    data-testid={`button-email-${app.id}`}
+                  >
+                    <Mail className="w-4 h-4 md:mr-2" />
+                    <span className="hidden md:inline">Email</span>
+                  </Button>
                 </div>
               </div>
             </Card>
@@ -182,6 +250,52 @@ export default function Records() {
           </Card>
         )}
       </main>
+
+      <Dialog open={emailDialogOpen} onOpenChange={setEmailDialogOpen}>
+        <DialogContent className="bg-[#1a1a1a] border-[#333] text-[#fcb32c]">
+          <DialogHeader>
+            <DialogTitle>Send Audit Report</DialogTitle>
+            <DialogDescription className="text-muted-foreground">
+              Enter your email address to receive the spray application audit report as a PDF.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div>
+              <Label htmlFor="audit-email" className="text-[#fcb32c]">
+                Email Address
+              </Label>
+              <Input
+                id="audit-email"
+                type="email"
+                placeholder="your@email.com"
+                value={emailAddress}
+                onChange={(e) => setEmailAddress(e.target.value)}
+                className="mt-1.5 bg-[#121212db]"
+                data-testid="input-audit-email"
+              />
+            </div>
+            <div className="flex gap-3">
+              <Button
+                onClick={handleSendEmail}
+                disabled={sendEmailMutation.isPending}
+                className="flex-1 bg-[#093d2b] text-[#fcb32c]"
+                data-testid="button-send-audit-email"
+              >
+                <Mail className="w-4 h-4 mr-2" />
+                {sendEmailMutation.isPending ? "Sending..." : "Send Report"}
+              </Button>
+              <Button
+                onClick={() => setEmailDialogOpen(false)}
+                variant="outline"
+                className="flex-1"
+                data-testid="button-cancel-email"
+              >
+                Cancel
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
