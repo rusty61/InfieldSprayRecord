@@ -61,3 +61,20 @@ export const insertApplicationSchema = createInsertSchema(applications).omit({
 
 export type InsertApplication = z.infer<typeof insertApplicationSchema>;
 export type Application = typeof applications.$inferSelect;
+
+export const recommendations = pgTable("recommendations", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  applicationId: text("application_id").notNull(),
+  agronomer: text("agronomer").notNull(),
+  recommendation: text("recommendation").notNull(),
+  priority: varchar("priority", { enum: ["low", "medium", "high"] }).notNull().default("medium"),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+});
+
+export const insertRecommendationSchema = createInsertSchema(recommendations).omit({
+  id: true,
+  createdAt: true,
+});
+
+export type InsertRecommendation = z.infer<typeof insertRecommendationSchema>;
+export type Recommendation = typeof recommendations.$inferSelect;

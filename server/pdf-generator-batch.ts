@@ -1,3 +1,4 @@
+// @ts-ignore - pdfkit doesn't have types but works fine at runtime
 import PDFDocument from "pdfkit";
 import { type Application } from "@shared/schema";
 
@@ -49,7 +50,7 @@ export function generateBatchAuditPDF(applications: Application[]): Buffer {
 
   applications.forEach((app, index) => {
     if (index > 0) doc.text("");
-    doc.font("Helvetica-Bold").text(`${index + 1}. ${app.farm} - ${app.paddock}`);
+    doc.font("Helvetica-Bold").text(`${index + 1}. ${app.farm}`);
     doc.font("Helvetica").fillColor("#666");
     doc.text(`Date: ${new Date(app.applicationDate).toLocaleDateString("en-AU")}`);
     doc.text(`Operator: ${app.operator}`);

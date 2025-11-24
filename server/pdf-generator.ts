@@ -1,3 +1,4 @@
+// @ts-ignore - pdfkit doesn't have types but works fine at runtime
 import PDFDocument from "pdfkit";
 import { type Application, type Paddock } from "@shared/schema";
 
