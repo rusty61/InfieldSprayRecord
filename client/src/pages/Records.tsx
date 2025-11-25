@@ -23,6 +23,7 @@ import {
 import { Label } from "@/components/ui/label";
 import { Search, Download, Eye, Calendar, MapPin, Mail, AlertCircle, CheckCircle2, ChevronDown } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { apiRequest } from "../lib/queryClient";
 
 export default function Records() {
   const { toast } = useToast();
@@ -96,25 +97,19 @@ export default function Records() {
   const sendEmailMutation = useMutation({
     mutationFn: async ({ appId, email, isExport }: { appId?: string; email: string; isExport?: boolean }) => {
       if (isExport && exportMode === "all") {
-        const response = await fetch(`/api/applications/export/send-email`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ email, applications: filteredApplications }),
-        });
-        if (!response.ok) {
-          throw new Error("Failed to send export");
-        }
+        const response = await apiRequest(
+          "POST",
+          "/api/applications/export/send-email",
+          { email, applications: filteredApplications },
+        );
         return response.json();
       }
-      
-      const response = await fetch(`/api/applications/${appId}/send-email`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email }),
-      });
-      if (!response.ok) {
-        throw new Error("Failed to send email");
-      }
+
+      const response = await apiRequest(
+        "POST",
+        `/api/applications/${appId}/send-email`,
+        { email },
+      );
       return response.json();
     },
     onSuccess: () => {

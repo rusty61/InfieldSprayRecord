@@ -72,6 +72,35 @@ SENDGRID_API_KEY=your_sendgrid_api_key
 SESSION_SECRET=your_secret_key_here
 ```
 
+For the Vite frontend (used by Vercel), copy `client/.env.example` to `client/.env` and set:
+
+```
+VITE_API_BASE_URL=https://infieldsprayrecord.onrender.com
+VITE_SUPABASE_URL=your_supabase_project_url
+VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
+```
+
+## Deployment: Vercel + Supabase + Render
+
+The production layout keeps the lightweight React app on Vercel, data APIs on Supabase, and heavy work (PDF generation, storage uploads, `/finalize` and `/export.pdf` style endpoints) on Render:
+
+1. **Frontend on Vercel**
+   - Project URL: `https://infield-spray-record-9uqpp28qr-russ-projects-b64eac95.vercel.app`
+   - Build command: `npm run build` (root directory). Output is served from Vercel’s static hosting.
+   - Environment variables: `VITE_API_BASE_URL=https://infieldsprayrecord.onrender.com`, `VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY`.
+2. **Supabase integration**
+   - Connect the Vercel project to Supabase via the Vercel dashboard so the `SUPABASE_URL` and `SUPABASE_ANON_KEY` values are injected automatically.
+   - Configure Row Level Security (RLS) to allow the frontend’s anonymous key to read/write only the required tables. Keep a Supabase service role key available to the backend for operations that need to bypass RLS.
+3. **Backend on Render**
+   - Service ID: `srv-d4igsjodl3ps73d7bafg` with public URL `https://infieldsprayrecord.onrender.com`.
+   - Keep PDF generation, batch exports, and storage uploads on this service. It should continue to use the Supabase/Postgres connection string via `DATABASE_URL` and the Supabase service role key for privileged actions.
+4. **API routing**
+   - The frontend now uses the `VITE_API_BASE_URL` variable, so API calls from Vercel automatically point to the Render backend. When a direct Supabase call is possible (e.g., simple CRUD backed by RLS), use Supabase client calls from the frontend; otherwise, continue to call the Render endpoints for heavy or privileged work.
+5. **Deployment checklist**
+   - Vercel: set the Vite environment variables above and redeploy.
+   - Supabase: verify RLS policies and service role key availability.
+   - Render: ensure `DATABASE_URL`, `SESSION_SECRET`, `SENDGRID_API_KEY`, and Supabase service role env vars are configured.
+
 ### Getting Your SendGrid API Key
 
 1. Go to [SendGrid Dashboard](https://app.sendgrid.com/)
