@@ -1,5 +1,24 @@
 import { QueryClient, QueryFunction } from "@tanstack/react-query";
 
+const apiBaseUrl = import.meta.env.VITE_API_BASE_URL?.replace(/\/?$/, "") || "";
+
+export function resolveApiUrl(path: string) {
+  if (!path) return path;
+
+  const hasProtocol = /^[a-zA-Z][a-zA-Z\d+\-.]*:\/\//.test(path);
+  if (hasProtocol || !apiBaseUrl) {
+    return path;
+  }
+
+  try {
+    return new URL(path, apiBaseUrl).toString();
+  } catch (error) {
+    console.warn("Failed to resolve API URL", { path, apiBaseUrl, error });
+    const needsSlash = !apiBaseUrl.endsWith("/") && !path.startsWith("/");
+    return `${apiBaseUrl}${needsSlash ? "/" : ""}${path}`;
+  }
+}
+
 async function throwIfResNotOk(res: Response) {
   if (!res.ok) {
     const text = (await res.text()) || res.statusText;
@@ -12,7 +31,7 @@ export async function apiRequest(
   url: string,
   data?: unknown | undefined,
 ): Promise<Response> {
-  const res = await fetch(url, {
+  const res = await fetch(resolveApiUrl(url), {
     method,
     headers: data ? { "Content-Type": "application/json" } : {},
     body: data ? JSON.stringify(data) : undefined,
@@ -29,7 +48,8 @@ export const getQueryFn: <T>(options: {
 }) => QueryFunction<T> =
   ({ on401: unauthorizedBehavior }) =>
   async ({ queryKey }) => {
-    const res = await fetch(queryKey.join("/") as string, {
+    const requestUrl = resolveApiUrl(queryKey.join("/") as string);
+    const res = await fetch(requestUrl, {
       credentials: "include",
     });
 

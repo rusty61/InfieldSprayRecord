@@ -13,6 +13,7 @@ import { Separator } from "@/components/ui/separator";
 import { Plus, Save } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import type { Paddock, InsertApplication } from "@shared/schema";
+import { apiRequest } from "../lib/queryClient";
 
 export default function NewApplication() {
   const { toast } = useToast();
@@ -87,14 +88,7 @@ export default function NewApplication() {
 
   const createApplicationMutation = useMutation({
     mutationFn: async (data: InsertApplication) => {
-      const response = await fetch("/api/applications", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
-      });
-      if (!response.ok) {
-        throw new Error("Failed to create application");
-      }
+      const response = await apiRequest("POST", "/api/applications", data);
       return response.json();
     },
     onSuccess: () => {
